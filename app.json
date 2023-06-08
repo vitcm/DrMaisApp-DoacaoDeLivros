@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "testeVitorya",
+    "slug": "testeVitorya",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
