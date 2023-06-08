@@ -3,12 +3,7 @@ import { Image, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LivroDTO } from "../../dtos/livroDTO";
 import { useForm } from "react-hook-form";
-import {
-  getStorage,
-  ref,
-  uploadString,
-  getDownloadURL,
-} from "@firebase/storage";
+import uuid from "react-native-uuid";
 
 import {
   Container,
@@ -32,10 +27,7 @@ import {
 import { ButtonAdd } from "../../components/ButtonAdd";
 import { InputForm } from "../../components/InputForm";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { ButtonFoto } from "../../components/ButtonFoto";
-import axios from "axios";
 import { api } from "../../services/api";
-import { Input } from "../../components/Input";
 
 interface Params {
   livro: LivroDTO;
@@ -67,17 +59,17 @@ export function Cadastro() {
     imagem: "",
   });
 
-  const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(
-    null
-  );
+  // const [imagemSelecionada, setImagemSelecionada] = useState<string | null>(
+  //   null
+  // );
 
   const navigation = useNavigation<any>();
 
-  const [imagemLink, setImagemLink] = useState(""); // Estado para armazenar o link da imagem
+  // const [imagemLink, setImagemLink] = useState(""); // Estado para armazenar o link da imagem
 
-  const handleImagemLinkChange = (value) => {
-    setImagemLink(value); // Atualiza o estado com o valor do link da imagem
-  };
+  // const handleImagemLinkChange = (value) => {
+  //   setImagemLink(value); // Atualiza o estado com o valor do link da imagem
+  // };
 
   const { control, handleSubmit } = useForm({
     defaultValues: { route },
@@ -85,24 +77,25 @@ export function Cadastro() {
 
   async function handleCadastro(form: FormData) {
     if (
-      !form.titulo ||
-      !form.autor ||
-      !form.editora ||
-      !form.isbn ||
-      !form.descricao ||
-      !imagemLink
+      form.titulo === "" ||
+      form.autor === "" ||
+      form.editora === "" ||
+      form.isbn === "" ||
+      form.descricao === "" ||
+      form.imagem === ""
     ) {
       alert("Todos os campos são obrigatórios!");
       return;
     } else {
       const data = {
         ...livro,
+        id: String(uuid.v4()),
         titulo: form.titulo || livro.titulo,
         autor: form.autor || livro.autor,
         editora: form.editora || livro.editora,
         isbn: form.isbn || livro.isbn,
         descricao: form.descricao || livro.descricao,
-        imagem: imagemLink || livro.imagem,
+        imagem: form.imagem || livro.imagem,
       };
       console.log(data);
 
@@ -171,22 +164,21 @@ export function Cadastro() {
           <Imagem>
             <TitleInput>Capa:</TitleInput>
             <Capa>
-              {imagemLink ? (
+              {/* {imagemLink ? (
                 <ImagemLivro source={{ uri: imagemLink }} />
-              ) : (
-                <ImagemLivro
-                  source={{
-                    uri: "https://cdn-icons-png.flaticon.com/512/91/91768.png",
-                  }}
-                />
-              )}
+              ) : ( */}
+              <ImagemLivro
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/91/91768.png",
+                }}
+              />
+              {/* )} */}
             </Capa>
           </Imagem>
           <Resumo>
             <TitleInput>Link Imagem Capa:</TitleInput>
             <InputForm
-              defaultValue={livro ? livro.imagem : ""}
-              onChangeText={handleImagemLinkChange}
+              defaultValue={livro ? livro.imagem : null}
               name="imagem"
               control={control}
               placeholder=""
